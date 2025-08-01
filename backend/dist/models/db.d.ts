@@ -7,6 +7,7 @@ export declare const UserModel: mongoose.Model<{
     username: string;
     email: string;
     password: string;
+    role: "user" | "admin";
     profileTitle: string;
     bio: string;
     avatarUrl: string;
@@ -18,6 +19,7 @@ export declare const UserModel: mongoose.Model<{
     username: string;
     email: string;
     password: string;
+    role: "user" | "admin";
     profileTitle: string;
     bio: string;
     avatarUrl: string;
@@ -31,6 +33,7 @@ export declare const UserModel: mongoose.Model<{
     username: string;
     email: string;
     password: string;
+    role: "user" | "admin";
     profileTitle: string;
     bio: string;
     avatarUrl: string;
@@ -48,6 +51,7 @@ export declare const UserModel: mongoose.Model<{
     username: string;
     email: string;
     password: string;
+    role: "user" | "admin";
     profileTitle: string;
     bio: string;
     avatarUrl: string;
@@ -59,6 +63,7 @@ export declare const UserModel: mongoose.Model<{
     username: string;
     email: string;
     password: string;
+    role: "user" | "admin";
     profileTitle: string;
     bio: string;
     avatarUrl: string;
@@ -72,6 +77,7 @@ export declare const UserModel: mongoose.Model<{
     username: string;
     email: string;
     password: string;
+    role: "user" | "admin";
     profileTitle: string;
     bio: string;
     avatarUrl: string;
@@ -82,20 +88,20 @@ export declare const UserModel: mongoose.Model<{
     __v: number;
 }>>;
 export declare const LinksModel: mongoose.Model<{
-    createdAt: NativeDate;
     user: mongoose.Types.ObjectId;
+    createdAt: NativeDate;
     title: string;
     url: string;
     imageUrl?: string | null;
 }, {}, {}, {}, mongoose.Document<unknown, {}, {
-    createdAt: NativeDate;
     user: mongoose.Types.ObjectId;
+    createdAt: NativeDate;
     title: string;
     url: string;
     imageUrl?: string | null;
 }, {}, mongoose.DefaultSchemaOptions> & {
-    createdAt: NativeDate;
     user: mongoose.Types.ObjectId;
+    createdAt: NativeDate;
     title: string;
     url: string;
     imageUrl?: string | null;
@@ -104,20 +110,20 @@ export declare const LinksModel: mongoose.Model<{
 } & {
     __v: number;
 }, mongoose.Schema<any, mongoose.Model<any, any, any, any, any, any>, {}, {}, {}, {}, mongoose.DefaultSchemaOptions, {
-    createdAt: NativeDate;
     user: mongoose.Types.ObjectId;
+    createdAt: NativeDate;
     title: string;
     url: string;
     imageUrl?: string | null;
 }, mongoose.Document<unknown, {}, mongoose.FlatRecord<{
-    createdAt: NativeDate;
     user: mongoose.Types.ObjectId;
+    createdAt: NativeDate;
     title: string;
     url: string;
     imageUrl?: string | null;
 }>, {}, mongoose.ResolveSchemaOptions<mongoose.DefaultSchemaOptions>> & mongoose.FlatRecord<{
-    createdAt: NativeDate;
     user: mongoose.Types.ObjectId;
+    createdAt: NativeDate;
     title: string;
     url: string;
     imageUrl?: string | null;

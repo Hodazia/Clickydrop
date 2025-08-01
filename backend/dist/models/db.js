@@ -32,6 +32,11 @@ const UserSchema = new mongoose_1.default.Schema({
         type: String,
         required: true,
     },
+    role: {
+        type: String,
+        enum: ['user', 'admin'],
+        default: 'user',
+    },
     // Public profile fields
     profileTitle: {
         type: String,
