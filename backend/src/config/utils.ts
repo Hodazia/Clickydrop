@@ -1,0 +1,11 @@
+// define some utils file here, like zod schema validation,
+
+import z, { email } from "zod";
+
+export const signupSchema = z.object({
+    username:z.string(),
+    email:z.string().email(),
+    password:z.string()
+})
+
+
