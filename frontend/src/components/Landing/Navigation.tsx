@@ -10,7 +10,8 @@ export const Navbar = () => {
         flex justify-between items-center
          bg-white shadow-sm border-b border-gray-100 border-1
          rounded-full  ml-2 mr-4
-         sticky top-0 z-50 transition-colors duration-300
+         fixed top-0 left-0 right-0 z-50
+        transition-all duration-300
         ">
 
                 <div className="flex justify-start gap-7 text-[#15px]">
