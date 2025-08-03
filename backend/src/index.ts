@@ -4,7 +4,7 @@ import dotenv from "dotenv"
 const app = express();
 import userRouter from "./routes/userrouter"
 import cookieParser from "cookie-parser"
-
+import cors from "cors";
 dotenv.config();
 app.use(express.json());
 
@@ -15,7 +15,7 @@ app.get("/", (req:Request, res:Response) => {
   res.send("Hello World");
 });
 
-
+app.use(cors());
 // MVC template 
 
 app.use("/api/v1/user",userRouter);

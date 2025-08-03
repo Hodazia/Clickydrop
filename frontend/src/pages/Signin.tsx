@@ -3,20 +3,68 @@ import { useState } from "react"
 import { Sparkle } from "lucide-react";
 import { Link } from "react-router-dom";
 import login from "../assets/LogIN.png"
+import { useNavigate } from "react-router-dom";
+import axios from "axios";
+import { BACKEND_URL } from "@/utils/schema";
+import toast, {Toaster} from "react-hot-toast"
+import { signinSchema } from "@/utils/schema";
 
-// logo should be therenext to ClickyDrop
+
 export const Signin = () => {
     const [password,setpassword] = useState('');
-    const [username,setusername] = useState("");
+    const [email,setemail] = useState("");
+    const navigate = useNavigate();
 
-    const handleSubmit = (e:any) => {
+    const handleSubmit = async (e:any) => {
         e.preventDefault();
-        console.log("Signup submitted:", { username, password });
-        // Add your signup logic here
+        console.log("Signup submitted:", { email, password });
+        
+        if (!email|| !password) {
+            toast.error("All fields are required!");
+            return;
+        }
+
+        const {success,data,error} = signinSchema.safeParse({password,email});
+
+
+        if(!success)
+        {
+            toast.error("The Data you enter is invalid");
+        }
+        const toastId = toast.loading('Signing in...');
+        try {
+            const response = await fetch(`${BACKEND_URL}/signin`, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ email,password }),
+            });
+
+            const data = await response.json();
+
+            if (!response.ok) {
+                // If the response is not OK, we throw an error with the message from the backend
+                throw new Error(data.message || 'Signin failed');
+            }
+            
+            // On successful signup, dismiss the loading toast and show a success toast
+            toast.success(`Welcome, ${data.user.username}! You can now signed in.`, {
+                id: toastId, // Dismiss the specific loading toast
+            });
+
+        } catch (error: any) {
+            // On error, dismiss the loading toast and show an error toast
+            toast.error(error.message ||
+                 "Network error. Please try again.", {
+                id: toastId, // Dismiss the specific loading toast
+            });
+        }
     };
 
     return (
         <>
+        <Toaster position="top-right"/>
         <div className="min-h-screen bg-white text-white flex 
         items-center justify-center p-4 sm:p-6 lg:p-8">
             <div className="w-full max-w-6xl mx-auto bg-white text-black 
@@ -42,9 +90,9 @@ export const Signin = () => {
                     flex flex-col mt-10 text-black">
                         <input
                             type="text"
-                            placeholder="Username"
-                            value={username}
-                            onChange={(e) => setusername(e.target.value)}
+                            placeholder="Email"
+                            value={email}
+                            onChange={(e) => setemail(e.target.value)}
                         />
                         <input
                             type="password"
