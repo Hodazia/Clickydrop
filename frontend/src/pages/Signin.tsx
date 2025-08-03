@@ -9,8 +9,11 @@ import { BACKEND_URL } from "@/utils/schema";
 import toast, {Toaster} from "react-hot-toast"
 import { signinSchema } from "@/utils/schema";
 
+interface SigninProps {
+    setIsAuthenticated: (isAuthenticated: boolean) => void;
+}
 
-export const Signin = () => {
+export const Signin = ({ setIsAuthenticated }:SigninProps) => {
     const [password,setpassword] = useState('');
     const [email,setemail] = useState("");
     const navigate = useNavigate();
@@ -52,6 +55,11 @@ export const Signin = () => {
             toast.success(`Welcome, ${data.user.username}! You can now signed in.`, {
                 id: toastId, // Dismiss the specific loading toast
             });
+            
+            setIsAuthenticated(true);
+            setTimeout(() => {
+                navigate("/dashboard")
+            },1500)
 
         } catch (error: any) {
             // On error, dismiss the loading toast and show an error toast

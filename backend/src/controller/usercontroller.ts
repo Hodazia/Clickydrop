@@ -10,7 +10,7 @@ import jwt from "jsonwebtoken"
 
 
 export const signup = async (req:Request,res:Response) => {
-    // once signed in , u can add a photo to the user's profile
+    // once signed in ,on the next controllers u can add a photo to the user's profile
     try {
         const {email,password,username} = req.body;
     if (!username || !email || !password) {
@@ -85,6 +85,15 @@ export const signin = async (req:Request,res:Response) => {
   const {email, password} = req.body;
   // extracted the email and password
 
+  const {success,data,error} = signupSchema.safeParse({email,password});
+
+  if(!success)
+  {
+      return res.status(400).json({
+          "message":"Invalid Credentials "
+      })
+  }
+
   try {
     if (
       email === process.env.ADMIN_EMAIL &&
@@ -151,6 +160,7 @@ export const logout = async (req:Request,res:Response) => {
   })
 }
 
+// it will be having a middleware from the route
 export const getMe = async (req:Request,res:Response) => {
   // get the details of the user,
   try{
@@ -174,3 +184,15 @@ export const getMe = async (req:Request,res:Response) => {
 
   }
 }
+
+export const checkAuth = async (req:Request, res:Response) => {
+  const token = req.cookies.token; // Access the cookie sent by the browser
+  if (token) {
+    // could also add logic here to verify the JWT token's validity ??
+    // with jwt.verify(token, JWT_SECRET)
+    return res.status(200).json({ isAuthenticated: true });
+  } else {
+    return res.status(401).json({ isAuthenticated: false });
+  }
+};
+

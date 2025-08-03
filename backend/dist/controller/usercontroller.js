@@ -4,7 +4,7 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.getMe = exports.logout = exports.signin = exports.signup = void 0;
+exports.checkAuth = exports.getMe = exports.logout = exports.signin = exports.signup = void 0;
 const utils_1 = require("../config/utils");
 const db_1 = require("../models/db");
 const bcryptjs_1 = __importDefault(require("bcryptjs"));
@@ -138,4 +138,16 @@ const getMe = async (req, res) => {
     }
 };
 exports.getMe = getMe;
+const checkAuth = async (req, res) => {
+    const token = req.cookies.token; // Access the cookie sent by the browser
+    if (token) {
+        // You could also add logic here to verify the JWT token's validity
+        // with jwt.verify(token, JWT_SECRET)
+        return res.status(200).json({ isAuthenticated: true });
+    }
+    else {
+        return res.status(401).json({ isAuthenticated: false });
+    }
+};
+exports.checkAuth = checkAuth;
 //# sourceMappingURL=usercontroller.js.map
