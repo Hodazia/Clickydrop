@@ -3,10 +3,32 @@
 
 import express from "express";
 import { Request,Response } from "express";
-import { signupSchema } from "../config/utils";
+import { signupSchema,signinSchema } from "../config/utils";
 import { UserModel } from "../models/db";
 import bcrypt from "bcryptjs";
 import jwt from "jsonwebtoken"
+import nodemailer from "nodemailer"
+
+/*
+The secure: true attribute for a cookie tells the browser to only send 
+that cookie over an encrypted HTTPS connection. 
+Since both your frontend (http://localhost:5173) and your backend 
+(http://localhost:3000) are running on http (an insecure protocol),
+ the browser is correctly refusing to send the authentication cookie with 
+ the request.
+
+Your verifyToken middleware on the backend is then receiving a request 
+with no cookie, leading it to correctly return a 401 Unauthorized status.
+ Postman works because it does not enforce the same strict browser 
+ security policies.
+*/
+
+let options = {
+  maxAge: 20 * 60 * 1000, // would expire in 20minutes
+  httpOnly: true, // The cookie is only accessible by the web server
+  secure: true,
+  sameSite: "None",
+};
 
 
 export const signup = async (req:Request,res:Response) => {
@@ -52,14 +74,10 @@ export const signup = async (req:Request,res:Response) => {
        process.env.JWT_SECRET as string, 
        { expiresIn: '1h' });
 
-    const options = {
-      httpOnly : true,
-      secure : true
-    }
 
+       // no need to send cookies
     return res
           .status(201)
-          .cookie("token",token,options)
           .json({
       message: '✅ User registered',
       user: {
@@ -85,7 +103,7 @@ export const signin = async (req:Request,res:Response) => {
   const {email, password} = req.body;
   // extracted the email and password
 
-  const {success,data,error} = signupSchema.safeParse({email,password});
+  const {success,data,error} = signinSchema.safeParse({email,password});
 
   if(!success)
   {
@@ -106,7 +124,10 @@ export const signin = async (req:Request,res:Response) => {
       );
 
       return res
-        .cookie("token", token, { httpOnly: true, secure: true })
+        .cookie("JWttoken", token, 
+          {
+            maxAge: 20 * 60 * 1000, // would expire in 20minutes
+          })
         .status(200)
         .json({
           message: "✅ Logged in as Admin",
@@ -133,8 +154,12 @@ export const signin = async (req:Request,res:Response) => {
       process.env.JWT_SECRET as string,
       { expiresIn: "1h" }
     );
+    
 
-    return res.cookie("token", token, { httpOnly: true, secure: true }).
+    return res.cookie("JWTtoken", token, 
+      {
+        maxAge: 20 * 60 * 1000, // would expire in 20minutes
+      }).
     status(200).json({
       message: "✅ Logged in as User",
       user: {
@@ -170,7 +195,9 @@ export const getMe = async (req:Request,res:Response) => {
         return res.status(401).json({ message: 'Unauthorized' });
       }
   
-      const user = await UserModel.findById(userId).select('-password');
+      const user = await UserModel.findById(userId).select('username email avatarUrl');
+
+
       if (!user) {
         return res.status(404).json({ message: 'User not found' });
       }
@@ -186,7 +213,10 @@ export const getMe = async (req:Request,res:Response) => {
 }
 
 export const checkAuth = async (req:Request, res:Response) => {
-  const token = req.cookies.token; // Access the cookie sent by the browser
+  const token = req.cookies.JWTtoken;
+   // Access the cookie sent by the browser
+
+   console.log("the cookies from checkAuth are , " ,token);
   if (token) {
     // could also add logic here to verify the JWT token's validity ??
     // with jwt.verify(token, JWT_SECRET)
@@ -196,3 +226,90 @@ export const checkAuth = async (req:Request, res:Response) => {
   }
 };
 
+export const sendfeedback = async (req:Request,res:Response) => {
+  // 
+  // send it to the backend
+  const {email,query} = req.body;
+
+  // Validate incoming data (basic validation)
+  if (!email || !query) {
+      return res.status(400).json(
+          { success: false, 
+          message: "Please provide name, email, and query." });
+  }
+
+// have a general HTML Template for this
+const thankYouHtmlTemplate = `
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Thank You for Your Feedback!</title>
+  <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+  <style>
+      body {
+          font-family: "Inter", sans-serif;
+      }
+  </style>
+</head>
+<body class="bg-gray-100 min-h-screen flex items-center justify-center p-4">
+  <div class="bg-white p-8 rounded-lg shadow-xl max-w-2xl w-full text-center">
+      <h1 class="text-4xl font-extrabold text-blue-600 mb-6">Hey User ${email} Thank You!</h1>
+      <p class="text-gray-700 text-lg mb-4">
+          We sincerely appreciate you taking the time to send us your query/feedback.
+          Your input is incredibly valuable and helps us improve our website and services.
+      </p>
+      <p class="text-gray-700 text-lg mb-4">
+          Your query <strong>${query}</strong> , has been received.
+      </p>
+      <p class="text-gray-700 text-lg mb-6">
+          We are constantly working to enhance your experience.
+           Please keep an eye out for
+          new features and updates in our upcoming versions!
+      </p>
+      <p class="text-gray-500 text-sm mt-8">
+          &copy; 2025 ClickyDrop . All rights reserved.
+      </p>
+  </div>
+</body>
+</html>
+`;
+
+  // create a nodemailer transport
+  const transporter = nodemailer.createTransport({
+      service: 'gmail',
+      auth: {
+        user: 'zia23hoda@gmail.com', // Your Gmail address
+        pass: process.env.GMAIL_APP_AUTH, // Use an App Password (not your Gmail password)
+      },
+  })
+
+  async function sendEmail() {
+      try {
+        const mailOptions = {
+          from: 'zia23hoda@gmail.com',
+          to: email,
+          subject: `Feedback Received Successfully `,
+          text: 'Hello, this is a plain-text email!',
+          html: thankYouHtmlTemplate, // Optional HTML content
+        };
+    
+        const info = await transporter.sendMail(mailOptions);
+        console.log('Email sent:', info.messageId);
+
+        return res.status(200).json(
+          { success: true,
+           message: "Your query has been sent successfully!" });
+      } 
+      catch (err) {
+        console.error('Error sending email:', err);
+        return res.status(500).json(
+          { success: false, 
+          message: "Failed to send your query. Please try again later." });
+      }
+    }
+    
+    sendEmail();      
+
+} 

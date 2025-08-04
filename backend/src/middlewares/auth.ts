@@ -4,7 +4,8 @@ import { Request, Response, NextFunction } from "express";
 
 
 export const verifyToken = (req: Request, res: Response, next: NextFunction) => {
-  const token = req.cookies.token;
+  const token = req.cookies.JWTtoken;
+  console.log("the token is ", token );
 
   if (!token) return res.status(401).json({ message: "Token missing" });
 

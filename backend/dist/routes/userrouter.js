@@ -12,5 +12,6 @@ router.post("/signin", usercontroller_1.signin);
 router.post("/logout", usercontroller_1.logout);
 router.get("/me", auth_1.verifyToken, usercontroller_1.getMe);
 router.get("/check-auth", usercontroller_1.checkAuth);
+router.post("/send-feedback", usercontroller_1.sendfeedback);
 exports.default = router;
 //# sourceMappingURL=userrouter.js.map

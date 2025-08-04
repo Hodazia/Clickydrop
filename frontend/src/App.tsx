@@ -9,7 +9,7 @@ import { useState,useEffect } from 'react'
 import { BACKEND_URL } from './utils/schema'
 import { PrivateRoute } from './components/User/RoutePrivate'
 import { Navigate } from 'react-router-dom'
-
+import { Preview } from './pages/Preview'
 
 function App() {
   const [isAuthenticated, setIsAuthenticated] = useState(false);
@@ -58,14 +58,15 @@ function App() {
                         </PrivateRoute>
                     }
                 />
-                {/* <Route
-                    path="/dashboard/profile"
+                <Route
+                    path="/dashboard/preview"
                     element={
                         <PrivateRoute isAuthenticated={isAuthenticated}>
-                            <Profile />
+                            <Preview />
                         </PrivateRoute>
                     }
                 />
+               {/* 
                 <Route
                     path="/dashboard/links"
                     element={

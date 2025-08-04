@@ -7,7 +7,8 @@ exports.verifyAdmin = exports.verifyToken = void 0;
 // middlewares/auth.ts
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
 const verifyToken = (req, res, next) => {
-    const token = req.cookies.token;
+    const token = req.cookies.JWTtoken;
+    console.log("the token is ", token);
     if (!token)
         return res.status(401).json({ message: "Token missing" });
     try {

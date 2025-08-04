@@ -75,11 +75,12 @@ export const NavBarUser = () => {
             <Globe size={20} />
             Links
           </Link>
-          <Link to="/preview" className="flex items-center gap-2 px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors">
+          <Link to="/dashboard/preview" className="flex items-center gap-2 px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors">
             <Code size={20} />
             Preview
           </Link>
-          <Link to="/profiledashboard" className="flex items-center gap-2 px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors">
+          <Link to="/profiledashboard" 
+          className="flex items-center gap-2 px-3 py-2 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors">
             <User size={20} />
             Profile
           </Link>
@@ -120,7 +121,7 @@ export const NavBarUser = () => {
             <Globe size={20} />
             Links
           </Link>
-          <Link to="/preview" onClick={toggleMenu} className="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors">
+          <Link to="/dashboard/preview" onClick={toggleMenu} className="flex items-center gap-3 px-4 py-3 rounded-lg text-gray-700 hover:bg-gray-100 transition-colors">
             <Code size={20} />
             Preview
           </Link>
