@@ -3,30 +3,39 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
     return (mod && mod.__esModule) ? mod : { "default": mod };
 };
 Object.defineProperty(exports, "__esModule", { value: true });
-exports.verifyAdmin = exports.verifyToken = void 0;
-// middlewares/auth.ts
+exports.verifyToken = void 0;
 const jsonwebtoken_1 = __importDefault(require("jsonwebtoken"));
-const verifyToken = (req, res, next) => {
-    const token = req.cookies.JWTtoken;
-    console.log("the token is ", token);
-    if (!token)
-        return res.status(401).json({ message: "Token missing" });
+const verifyToken = async (req, res, next) => {
     try {
-        const decoded = jsonwebtoken_1.default.verify(token, process.env.JWT_SECRET);
-        //@ts-ignore
-        req.user = decoded; // { id, role }
+        const header = req.headers.authorization || req.headers.Authorization;
+        if (!header) {
+            res.status(401).json({ message: 'Unauthorized, missing headers' });
+            return;
+        }
+        const parts = header.split(' ');
+        if (parts.length !== 2 || parts[0] !== 'Bearer') {
+            res.status(403).json({
+                message: "Unauthorized"
+            });
+            return;
+        }
+        const token = parts[1];
+        const verified = jsonwebtoken_1.default.verify(token, process.env.JWT_SECRET || 'secret');
+        // Support multiple payload shapes: { userId }, { userid }, { id }
+        const raw = verified.userId ?? verified.userid ?? verified.id;
+        const numeric = typeof raw === 'number' ? raw : Number(raw);
+        if (!Number.isFinite(numeric)) {
+            res.status(401).json({ message: 'Unauthorized, invalid token payload' });
+            return;
+        }
+        req.tokenuserid = numeric;
         next();
     }
-    catch (err) {
-        return res.status(401).json({ message: "Invalid token" });
+    catch (error) {
+        console.log(error);
+        res.status(403).json({ message: 'Unauthorized' });
+        return;
     }
 };
 exports.verifyToken = verifyToken;
-const verifyAdmin = (req, res, next) => {
-    //@ts-ignore
-    if (req.user?.role === "admin")
-        return next();
-    return res.status(403).json({ message: "Access denied: Admins only" });
-};
-exports.verifyAdmin = verifyAdmin;
 //# sourceMappingURL=auth.js.map

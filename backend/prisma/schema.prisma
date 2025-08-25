@@ -1,0 +1,84 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+
+generator client {
+  provider = "prisma-client-js"
+  output   = "../dist/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("POSTGRES_DB")
+}
+
+
+model User {
+  id          Int       @id @default(autoincrement())
+  username    String    @unique
+  email       String    @unique
+  password    String
+  description String?
+  profileUrl  String?
+  createdAt   DateTime  @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  // Relations
+  links    Link[]
+  socials  Social[]
+  theme    Theme?
+}
+
+model Link {
+  id            Int      @id @default(autoincrement())
+  userId        Int
+  linkUrl       String
+  linkThumbnail String?
+  description   String?
+  position      Int?     // to order links
+  createdAt     DateTime @default(now())
+  updatedAt   DateTime  @updatedAt
+
+  // Relation
+  user User @relation(fields: [userId], references: [id])
+}
+
+model Social {
+  id        Int      @id @default(autoincrement())
+  userId    Int
+  platform  String   // ENUM alternative below
+  url       String
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  // Relation
+  user User @relation(fields: [userId], references: [id])
+}
+
+// Optional ENUM for Socials
+enum Platform {
+  linkedin
+  instagram
+  youtube
+  twitter
+  github
+  other
+}
+
+model Theme {
+  id             Int      @id @default(autoincrement())
+  userId         Int      @unique
+  textColor      String?
+  bgColor        String?
+  bgImage        String?
+  linkBoxColor   String?
+  buttonStyle    String?
+  fontFamily     String?
+  createdAt      DateTime @default(now())
+  updatedAt      DateTime @updatedAt
+
+  // Relation
+  user User @relation(fields: [userId], references: [id])
+}

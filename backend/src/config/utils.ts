@@ -13,4 +13,7 @@ export const signinSchema = z.object({
     password:z.string()
 })
 
-
+export const SocialpostSchema = z.object({
+    platform: z.string(),
+    url:z.string()
+})

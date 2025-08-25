@@ -5,13 +5,10 @@ var __importDefault = (this && this.__importDefault) || function (mod) {
 Object.defineProperty(exports, "__esModule", { value: true });
 const express_1 = __importDefault(require("express"));
 const router = express_1.default.Router();
-const usercontroller_1 = require("../controller/usercontroller");
 const auth_1 = require("../middlewares/auth");
-router.post("/signup", usercontroller_1.signup);
-router.post("/signin", usercontroller_1.signin);
-router.post("/logout", usercontroller_1.logout);
-router.get("/me", auth_1.verifyToken, usercontroller_1.getMe);
-router.get("/check-auth", usercontroller_1.checkAuth);
-router.post("/send-feedback", usercontroller_1.sendfeedback);
+const usercontroller_1 = require("../controller/usercontroller");
+router.post("/signup", usercontroller_1.Signup);
+router.post("/signin", usercontroller_1.Signin);
+router.get("/me", auth_1.verifyToken, usercontroller_1.GetData);
 exports.default = router;
 //# sourceMappingURL=userrouter.js.map

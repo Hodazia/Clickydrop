@@ -1,0 +1,1 @@
+{"version":3,"file":"socialrouter.js","sourceRoot":"","sources":["../../src/routes/socialrouter.ts"],"names":[],"mappings":";;;;;AAAA,sDAA8B;AAC9B,qEAAqE;AACrE,8CAAkD;AAElD,MAAM,YAAY,GAAG,iBAAO,CAAC,MAAM,EAAE,CAAC;AAEtC,YAAY,CAAC,GAAG,CAAC,aAAa,EAAC,kBAAW,EAAC,0BAAO,CAAC,CAAC;AACpD,YAAY,CAAC,IAAI,CAAC,cAAc,EAAC,kBAAW,EAAC,6BAAU,CAAC,CAAC;AAEzD,kBAAe,YAAY,CAAA"}

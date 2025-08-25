@@ -7,6 +7,28 @@ import linkRouter from "./routes/userlinksrouter"
 
 import cookieParser from "cookie-parser"
 import cors from "cors";
+import { PrismaClient } from "./generated/prisma";
+import Socialrouter from "./routes/socialrouter";
+
+const prisma = new PrismaClient();
+
+async function createuser(username:string,email:string,password:string)
+{
+  // define a user
+  const res = await prisma.user.create({
+    data: {
+        username,
+        password,
+        email
+    }
+  })
+  console.log(res);
+}
+
+async function getUser(username: string) {
+  //
+}
+
 dotenv.config();
 app.use(express.json());
 
@@ -33,11 +55,17 @@ app.get("/", (req:Request, res:Response) => {
 // MVC template 
 
 app.use("/api/v1/user",userRouter); // for the users. 
+app.use("/api/v1/social",Socialrouter); // for the social media links
+
+
+
 
 // for the links , 
 app.use("/api/v1/links",linkRouter);
 
 app.listen(3000, () => {
     connectDB();
-  console.log("Server is running on port 3000");
+    // createuser("ZIA#243","zia23hoda@gmail.com","zia23hoda");
+    
+    console.log("Server is running on port 3000");
 });
